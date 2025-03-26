@@ -1,16 +1,16 @@
-
 @startuml
+
 class Jogador {
   +UUID id
   +string nome
-  +int habilidade
-  +int energia
-  +int sorte
-  +int fe
   +int habilidadeInicial
+  +int habilidade
   +int energiaInicial
+  +int energia
   +int sorteInicial
+  +int sorte
   +int feInicial
+  +int fe
   +int provisoes
   +Paragrafo paragrafoAtual
   +List<Equipamento> equipamentos
@@ -26,13 +26,43 @@ class Paragrafo {
   +List<Opcao> opcoes
   +List<Criatura> criaturas
   +List<AcaoIntermediaria> acoesIntermediarias
+  +List<string> itensAdquiridos
+  +Condicao decisaoCondicional
+  +List<string> efeitosContinuosCombate
+  +List<string> transformacoesOuAflicoes
+  +List<string> efeitosNarrativos
 }
 
 class Opcao {
   +UUID id
   +string texto
-  +int destino
+  +Paragrafo destino
   +Condicao condicao
+}
+
+class Condicao {
+  +enum tipo {possui_item, atributo_minimo, aflicao_ativa}
+  +string|number valor
+  +bool inverter
+}
+
+class Combate {
+  +UUID id
+  +Jogador jogador
+  +List<Criatura> inimigos
+  +enum status {ativo, encerrado, vitoria, derrota, fuga}
+  +List<Rodada> rodadas
+  +Date dataInicio
+  +Date dataFim
+}
+
+class Rodada {
+  +int numero
+  +int forcaJogador
+  +int forcaInimigo
+  +enum resultado {jogador_feriu, inimigo_feriu, empate}
+  +bool sorteUtilizada
+  +string descricao
 }
 
 class Criatura {
@@ -40,37 +70,48 @@ class Criatura {
   +string nome
   +int habilidade
   +int energia
+  +string descricao
+  +Map<string, number> modificadores
+}
+
+class Equipamento {
+  +UUID id
+  +string nome
+  +enum tipo {arma, armadura, escudo, item_magico, outro}
+  +string descricao
+  +int bonusHabilidade
+  +string efeitoEspecial
+}
+
+class Aflicao {
+  +UUID id
+  +string nome
+  +enum tipo {continua, temporaria}
+  +string efeito
+  +string condicoesCura
+}
+
+class Feitico {
+  +UUID id
+  +string nome
+  +string descricao
+  +string efeito
+  +int usosRestantes
 }
 
 class Efeito {
   +UUID id
-  +string tipo
+  +enum tipo {bonus_temporario, penalidade, modificador_combate}
   +string atributo
   +int valor
-  +int? duracao
+  +int duracao
 }
 
 class AcaoIntermediaria {
   +UUID id
   +string descricao
-  +string tipo
-  +int? valor
+  +enum tipo {perda_energia, ganho_fe, teste_sorte, instrução_especial}
+  +int valor
 }
 
-class Condicao {
-  +string tipo
-  +string valor
-  +boolean inverter
-}
-
-Jogador --> Paragrafo : paragrafoAtual
-Paragrafo --> Opcao
-Paragrafo --> Criatura
-Paragrafo --> AcaoIntermediaria
-Opcao --> Condicao
-Jogador --> Equipamento
-Jogador --> Aflicao
-Jogador --> Feitico
-Jogador --> Efeito
-Jogador --> AcaoIntermediaria
 @enduml
