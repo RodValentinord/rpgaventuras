@@ -16,39 +16,23 @@ class Jogador {
   +List<Equipamento> equipamentos
   +List<Aflicao> aflicoes
   +List<Feitico> feiticos
-  +testarSorte()
-  +usarProvisao()
+  +List<Efeito> efeitosTemporarios
+  +List<AcaoIntermediaria> acoesPendentes
 }
 
 class Paragrafo {
   +int id
   +string texto
   +List<Opcao> opcoes
+  +List<Criatura> criaturas
+  +List<AcaoIntermediaria> acoesIntermediarias
 }
 
 class Opcao {
   +UUID id
   +string texto
-  +Paragrafo destino
+  +int destino
   +Condicao condicao
-}
-
-class Condicao {
-  +string tipo
-  +string valor
-  +boolean inverter
-}
-
-class Combate {
-  +UUID id
-  +Jogador jogador
-  +List<Criatura> inimigos
-  +List<Rodada> rodadas
-  +string status
-  +Date dataInicio
-  +Date dataFim
-  +iniciar()
-  +executarRodada()
 }
 
 class Criatura {
@@ -58,46 +42,35 @@ class Criatura {
   +int energia
 }
 
-class Rodada {
-  +int numero
-  +int forcaJogador
-  +int forcaInimigo
-  +string resultado
-  +boolean sorteUtilizada
-}
-
-class Equipamento {
+class Efeito {
   +UUID id
-  +string nome
   +string tipo
-  +string descricao
-  +int bonusHabilidade
+  +string atributo
+  +int valor
+  +int? duracao
 }
 
-class Aflicao {
+class AcaoIntermediaria {
   +UUID id
-  +string nome
+  +string descricao
   +string tipo
-  +string efeito
+  +int? valor
 }
 
-class Feitico {
-  +UUID id
-  +string nome
-  +string descricao
-  +string efeito
-  +int usosRestantes
+class Condicao {
+  +string tipo
+  +string valor
+  +boolean inverter
 }
 
 Jogador --> Paragrafo : paragrafoAtual
 Paragrafo --> Opcao
-Opcao --> Paragrafo : destino
+Paragrafo --> Criatura
+Paragrafo --> AcaoIntermediaria
 Opcao --> Condicao
 Jogador --> Equipamento
 Jogador --> Aflicao
 Jogador --> Feitico
-Combate --> Jogador
-Combate --> Criatura
-Combate --> Rodada
-
+Jogador --> Efeito
+Jogador --> AcaoIntermediaria
 @enduml

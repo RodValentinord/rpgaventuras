@@ -34,8 +34,6 @@ __pycache__/
 *.db
 *.json
 
-# Arquivos PDF e de entrada
-*.pdf
 
 # Build Frontend
 .next/
