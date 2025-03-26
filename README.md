@@ -1,5 +1,3 @@
-# rpgaventuras
-
 # Projeto RPG de Texto Web - A Cripta do Vampiro
 
 Este projeto tem como objetivo adaptar o livro-jogo *A Cripta do Vampiro* para um sistema web jogável, interativo e estruturado. Ele visa proporcionar uma experiência fiel ao livro, com suporte a lógicas de parágrafos interligados, combate com criaturas, gestão de atributos e inventário, testes de sorte e elementos de RPG de mesa automatizados.
@@ -86,6 +84,3 @@ Projeto pessoal de portfólio. Direitos autorais da obra original pertencem aos 
 ---
 
 > Criado por Rodolfo Valentino | Engenharia de Computação @ Descomplica | Desenvolvedor na RD Station
-```
-
-Se quiser, posso salvar esse README direto em arquivo `.md` para você também. Deseja isso?
