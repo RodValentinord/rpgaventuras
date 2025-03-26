@@ -1,0 +1,42 @@
+
+# Ambiente
+.env
+.env.*
+.venv/
+
+# Node
+node_modules/
+dist/
+.cache/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# Sistemas
+.DS_Store
+Thumbs.db
+
+# Py (scripts de parse)
+__pycache__/
+*.pyc
+*.pyo
+
+# Arquivos gerados
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.json
+
+# Arquivos PDF e de entrada
+*.pdf
+
+# Build Frontend
+.next/
+out/
