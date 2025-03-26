@@ -23,13 +23,13 @@ def extrair_paragrafos(path_pdf):
         id_paragrafo = int(match.group(1))
         texto_paragrafo = match.group(2).strip()
 
-        # Detectar opções de seguimento
+        # Detectar opções de seguimento (frase completa com "vá para N")
         opcoes = []
-        for m in re.finditer(r"(.*?)vá para (\d+)", texto_paragrafo, re.IGNORECASE):
-            texto_opcao = m.group(1).strip()
+        for m in re.finditer(r"((?:[^.\n]*?)vá para (\d+))", texto_paragrafo, re.IGNORECASE):
+            frase = m.group(1).strip()
             destino = int(m.group(2))
             opcoes.append({
-                "texto": texto_opcao,
+                "texto": frase,
                 "destino": destino
             })
 
@@ -59,9 +59,6 @@ def extrair_paragrafos(path_pdf):
 
 if __name__ == "__main__":
     resultado = extrair_paragrafos("fighting-fantasy-a-cripta-do-vampiro-biblioteca-elfica.pdf")
-    with open("paragrafos_extraidos_v2.json", "w", encoding="utf-8") as f:
+    with open("paragrafos_extraidos_v3.json", "w", encoding="utf-8") as f:
         json.dump(resultado, f, ensure_ascii=False, indent=2)
-    print("Parágrafos extraídos com sucesso! Resultado salvo em 'paragrafos_extraidos_v2.json'")
-
-
-    
+    print("Parágrafos extraídos com sucesso! Resultado salvo em 'paragrafos_extraidos_v3.json'")
