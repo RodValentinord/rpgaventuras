@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoCondicao {
+  possui_item
+  atributo_minimo
+  aflicao_ativa
+}
+
+enum TipoAcao {
+  ganho_fé
+  ganho_sorte
+  perda_energia
+  perda_fé
+  perda_habilidade
+  recupera_energia
+}
+
+enum TipoEfeito {
+  efeito_continuo
+  penalidade
+  sangramento
+  maldição
+}
+
+enum TipoEquipamento {
+  arma
+  armadura
+  escudo
+  item_magico
+  outro
+}
+
+enum TipoAflicao {
+  continua
+  temporaria
+}
+
+enum StatusCombate {
+  ativo
+  encerrado
+  vitoria
+  derrota
+  fuga
+}
+
+enum ResultadoRodada {
+  jogador_feriu
+  inimigo_feriu
+  empate
+}
+
+model Paragrafo {
+  id                  Int                @id
+  texto               String
+
+  opcoesDestino       Opcao[]            @relation("DestinoParagrafo")
+  opcoesOrigem        Opcao[]            @relation("OrigemParagrafo")
+  jogadores           Jogador[]          @relation("JogadorParagrafo")
+  criaturas           Criatura[]
+  acoesIntermediarias AcaoIntermediaria[]
+  efeitos             Efeito[]
+  itensAdquiridos     ItemAdquirido[]
+  decisaoCondicional  DecisaoCondicional?
+}
+
+model Jogador {
+  id                 String               @id @default(uuid())
+  nome               String
+  habilidadeInicial  Int
+  habilidade         Int
+  energiaInicial     Int
+  energia            Int
+  sorteInicial       Int
+  sorte              Int
+  feInicial          Int
+  fe                 Int
+  provisoes          Int
+
+  paragrafoAtualId   Int
+  paragrafoAtual     Paragrafo           @relation("JogadorParagrafo", fields: [paragrafoAtualId], references: [id])
+
+  equipamentos       Equipamento[]
+  aflicoes           Aflicao[]
+  feiticos           Feitico[]
+  efeitosTemporarios Efeito[]
+  acoesPendentes     AcaoIntermediaria[]
+  combates           Combate[]
+}
+
+model Opcao {
+  id          String     @id @default(uuid())
+  texto       String
+
+  destinoId   Int
+  destino     Paragrafo  @relation("DestinoParagrafo", fields: [destinoId], references: [id])
+
+  paragrafoId Int
+  paragrafo   Paragrafo  @relation("OrigemParagrafo", fields: [paragrafoId], references: [id])
+
+  condicao    Condicao?
+}
+
+model Condicao {
+  id         String        @id @default(uuid())
+  tipo       TipoCondicao
+  valor      String
+  inverter   Boolean?
+  opcaoId    String        @unique
+  opcao      Opcao         @relation(fields: [opcaoId], references: [id])
+}
+
+model Criatura {
+  id           String      @id @default(uuid())
+  nome         String
+  habilidade   Int
+  energia      Int
+  descricao    String?        // ← ADICIONAR ESTA LINHA
+  paragrafoId  Int
+  paragrafo    Paragrafo   @relation(fields: [paragrafoId], references: [id])
+  combates     Combate[]   @relation("CriaturasCombate")
+}
+
+
+model AcaoIntermediaria {
+  id          String        @id @default(uuid())
+  descricao   String
+  tipo        TipoAcao
+  valor       Int?
+  paragrafoId Int
+  paragrafo   Paragrafo     @relation(fields: [paragrafoId], references: [id])
+  jogadorId   String?
+  jogador     Jogador?      @relation(fields: [jogadorId], references: [id])
+}
+
+model Efeito {
+  id          String     @id @default(uuid())
+  tipo        TipoEfeito
+  descricao   String?
+  valor       Int
+  condicao    String?
+  jogadorId   String?
+  jogador     Jogador?   @relation(fields: [jogadorId], references: [id])
+  paragrafoId Int?
+  paragrafo   Paragrafo? @relation(fields: [paragrafoId], references: [id])
+}
+
+
+model ItemAdquirido {
+  id          String     @id @default(uuid())
+  nome        String
+  paragrafoId Int
+  paragrafo   Paragrafo  @relation(fields: [paragrafoId], references: [id])
+}
+
+model DecisaoCondicional {
+  id               String     @id @default(uuid())
+  condicao         String
+  verdadeiro       Int
+  falso            Int
+  paragrafoId      Int @unique
+  paragrafo        Paragrafo @relation(fields: [paragrafoId], references: [id])
+}
+
+model Equipamento {
+  id             String        @id @default(uuid())
+  nome           String
+  tipo           TipoEquipamento
+  descricao      String
+  bonusHabilidade Int?
+  efeitoEspecial String?
+  jogadorId      String
+  jogador        Jogador       @relation(fields: [jogadorId], references: [id])
+}
+
+model Aflicao {
+  id            String        @id @default(uuid())
+  nome          String
+  tipo          TipoAflicao
+  efeito        String
+  condicoesCura String?
+  jogadorId     String
+  jogador       Jogador       @relation(fields: [jogadorId], references: [id])
+}
+
+model Feitico {
+  id             String        @id @default(uuid())
+  nome           String
+  descricao      String
+  efeito         String
+  usosRestantes  Int
+  jogadorId      String
+  jogador        Jogador       @relation(fields: [jogadorId], references: [id])
+}
+
+model Combate {
+  id          String        @id @default(uuid())
+  jogadorId   String
+  jogador     Jogador       @relation(fields: [jogadorId], references: [id])
+  status      StatusCombate
+  dataInicio  DateTime
+  dataFim     DateTime?
+
+  rodadas     Rodada[]
+  inimigos    Criatura[]    @relation("CriaturasCombate")
+}
+
+model Rodada {
+  id              String            @id @default(uuid())
+  numero          Int
+  forcaJogador    Int
+  forcaInimigo    Int
+  resultado       ResultadoRodada
+  sorteUtilizada  Boolean
+  descricao       String?
+
+  combateId       String
+  combate         Combate           @relation(fields: [combateId], references: [id])
+}
