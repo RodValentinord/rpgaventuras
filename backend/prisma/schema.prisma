@@ -12,6 +12,12 @@ enum TipoCondicao {
   atributo_minimo
   aflicao_ativa
 }
+enum TipoOpcao {
+  PADRAO
+  CONDICIONAL
+  ESPECIAL
+}
+
 
 enum TipoAcao {
   ganho_fé
@@ -105,6 +111,8 @@ model Opcao {
   paragrafo   Paragrafo  @relation("OrigemParagrafo", fields: [paragrafoId], references: [id])
 
   condicao    Condicao?
+
+  tipoOpcao   TipoOpcao  @default(PADRAO) 
 }
 
 model Condicao {
