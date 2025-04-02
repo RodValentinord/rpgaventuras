@@ -6,7 +6,7 @@ import { UtilsModule } from 'src/utils/utils.module';
 import { CoreModule } from 'src/core/core.module';
 
 @Module({
-  imports: [PrismaModule, UtilsModule, CoreModule], // 👈 adicionar UtilsModule nos imports
+  imports: [PrismaModule, UtilsModule, CoreModule],
   controllers: [JogadorController],
   providers: [JogadorService],
 })
