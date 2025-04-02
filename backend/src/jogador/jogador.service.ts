@@ -4,12 +4,15 @@ import { CreateJogadorDTO } from './dto/create-jogador.dto';
 import { DiceService } from 'src/utils/dice.service';
 import { AvancarDTO } from './dto/avancar.dto';
 import { ExecutarAcaoDTO } from './dto/executar-acao.dto';
+import { AtributosService } from 'src/core/atributos.service';
+
 
 @Injectable()
 export class JogadorService {
   constructor(
     private prisma: PrismaService,
     private dice: DiceService,
+    private atributos: AtributosService
   ) {}
 
   async criarJogador(data: CreateJogadorDTO) {
@@ -108,40 +111,35 @@ export class JogadorService {
       throw new Error('Ação inválida ou não pertence a este jogador');
     }
   
-    const modificacoes: any = {};
+    const valor = acao.valor ?? 1;
   
     switch (acao.tipo) {
       case 'ganho_fé':
-        modificacoes.fe = { increment: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'fe', valor);
         break;
       case 'ganho_sorte':
-        modificacoes.sorte = { increment: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'sorte', valor);
         break;
       case 'perda_energia':
-        modificacoes.energia = { decrement: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'energia', -valor);
         break;
       case 'perda_fé':
-        modificacoes.fe = { decrement: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'fe', -valor);
         break;
       case 'perda_habilidade':
-        modificacoes.habilidade = { decrement: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'habilidade', -valor);
         break;
       case 'recupera_energia':
-        modificacoes.energia = { increment: acao.valor ?? 1 };
+        await this.atributos.aplicarModificacao(jogadorId, 'energia', valor);
         break;
       default:
         throw new Error('Tipo de ação não reconhecido');
     }
   
-    const jogadorAtualizado = await this.prisma.jogador.update({
-      where: { id: jogadorId },
-      data: modificacoes,
-    });
-  
     await this.prisma.acaoIntermediaria.delete({
       where: { id: data.acaoId },
     });
   
-    return jogadorAtualizado;
+    return this.buscarPorId(jogadorId); // melhor retornar estado atualizado completo
   }
 }

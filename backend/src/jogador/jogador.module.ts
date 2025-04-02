@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { JogadorController } from './jogador.controller';
 import { JogadorService } from './jogador.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { UtilsModule } from 'src/utils/utils.module'; // 👈 importar aqui
+import { UtilsModule } from 'src/utils/utils.module'; 
+import { CoreModule } from 'src/core/core.module';
 
 @Module({
-  imports: [PrismaModule, UtilsModule], // 👈 adicionar UtilsModule nos imports
+  imports: [PrismaModule, UtilsModule, CoreModule], // 👈 adicionar UtilsModule nos imports
   controllers: [JogadorController],
   providers: [JogadorService],
 })

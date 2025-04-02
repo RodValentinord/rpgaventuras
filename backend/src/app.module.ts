@@ -5,10 +5,11 @@ import { ParagrafosModule } from './paragrafos/paragrafos.module';
 import { PrismaService } from './prisma/prisma.service'; 
 import { JogadorModule } from './jogador/jogador.module';
 import { DiceService } from './utils/dice.service';
+import { CoreModule } from './core/core.module';
 
 
 @Module({
-  imports: [ParagrafosModule, JogadorModule, JogadorModule],
+  imports: [ParagrafosModule, JogadorModule, JogadorModule, CoreModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, DiceService],
 })
