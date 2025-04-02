@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateJogadorDTO } from './dto/create-jogador.dto';
 import { DiceService } from 'src/utils/dice.service';
 import { AvancarDTO } from './dto/avancar.dto';
+import { ExecutarAcaoDTO } from './dto/executar-acao.dto';
 
 @Injectable()
 export class JogadorService {
@@ -61,7 +62,7 @@ export class JogadorService {
     });
   }
   async avancarParagrafo(jogadorId: string, data: AvancarDTO) {
-    // 1. Buscar o jogador atual
+
     const jogador = await this.prisma.jogador.findUnique({
       where: { id: jogadorId },
       include: { paragrafoAtual: { include: { opcoesOrigem: true } } },
@@ -69,7 +70,6 @@ export class JogadorService {
   
     if (!jogador) throw new Error('Jogador não encontrado');
   
-    // 2. Validar se a opção existe no parágrafo atual
     const opcaoEscolhida = jogador.paragrafoAtual.opcoesOrigem.find(
       (opcao) => opcao.id === data.opcaoId,
     );
@@ -78,7 +78,6 @@ export class JogadorService {
       throw new Error('Opção inválida para o parágrafo atual');
     }
   
-    // 3. Atualizar o jogador para o novo parágrafo
     const jogadorAtualizado = await this.prisma.jogador.update({
       where: { id: jogadorId },
       data: {
@@ -98,7 +97,51 @@ export class JogadorService {
       },
     });
   
-    // 4. Retornar o novo parágrafo
     return jogadorAtualizado.paragrafoAtual;
+  }
+  async executarAcao(jogadorId: string, data: ExecutarAcaoDTO) {
+    const acao = await this.prisma.acaoIntermediaria.findUnique({
+      where: { id: data.acaoId },
+    });
+  
+    if (!acao || acao.jogadorId !== jogadorId) {
+      throw new Error('Ação inválida ou não pertence a este jogador');
+    }
+  
+    const modificacoes: any = {};
+  
+    switch (acao.tipo) {
+      case 'ganho_fé':
+        modificacoes.fe = { increment: acao.valor ?? 1 };
+        break;
+      case 'ganho_sorte':
+        modificacoes.sorte = { increment: acao.valor ?? 1 };
+        break;
+      case 'perda_energia':
+        modificacoes.energia = { decrement: acao.valor ?? 1 };
+        break;
+      case 'perda_fé':
+        modificacoes.fe = { decrement: acao.valor ?? 1 };
+        break;
+      case 'perda_habilidade':
+        modificacoes.habilidade = { decrement: acao.valor ?? 1 };
+        break;
+      case 'recupera_energia':
+        modificacoes.energia = { increment: acao.valor ?? 1 };
+        break;
+      default:
+        throw new Error('Tipo de ação não reconhecido');
+    }
+  
+    const jogadorAtualizado = await this.prisma.jogador.update({
+      where: { id: jogadorId },
+      data: modificacoes,
+    });
+  
+    await this.prisma.acaoIntermediaria.delete({
+      where: { id: data.acaoId },
+    });
+  
+    return jogadorAtualizado;
   }
 }
