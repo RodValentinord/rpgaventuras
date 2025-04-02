@@ -2,6 +2,7 @@ import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { InventarioService } from './inventario.service';
 import { AdicionarItemDTO } from './dto/adicionar-item.dto';
 import { Delete } from '@nestjs/common';
+import { UsarItemDTO } from './dto/usar-item.dto';
 
 @Controller('jogador/:id/inventario')
 export class InventarioController {
@@ -25,5 +26,12 @@ export class InventarioController {
     @Param('itemId') itemId: string,
   ) {
     return this.inventarioService.removerItem(jogadorId, itemId);
+  }
+  @Post('usar')
+  usarItem(
+    @Param('id') jogadorId: string,
+    @Body() data: UsarItemDTO,
+  ) {
+    return this.inventarioService.usarItem(jogadorId, data);
   }
 }
