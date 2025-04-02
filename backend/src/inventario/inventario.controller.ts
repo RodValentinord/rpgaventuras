@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { InventarioService } from './inventario.service';
 import { AdicionarItemDTO } from './dto/adicionar-item.dto';
+import { Delete } from '@nestjs/common';
 
 @Controller('jogador/:id/inventario')
 export class InventarioController {
@@ -17,5 +18,12 @@ export class InventarioController {
     @Body() data: AdicionarItemDTO,
   ) {
     return this.inventarioService.adicionarItem(jogadorId, data);
+  }
+  @Delete('itens/:itemId')
+  removerItem(
+    @Param('id') jogadorId: string,
+    @Param('itemId') itemId: string,
+  ) {
+    return this.inventarioService.removerItem(jogadorId, itemId);
   }
 }

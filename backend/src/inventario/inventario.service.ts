@@ -69,4 +69,18 @@ export class InventarioService {
         throw new Error('Tipo de item inválido');
     }
   }
+  async removerItem(jogadorId: string, itemId: string) {
+    const item = await this.prisma.itemAdquirido.findUnique({
+      where: { id: itemId },
+    });
+  
+    if (!item || item.jogadorId !== jogadorId) {
+      throw new Error('Item não encontrado ou não pertence ao jogador');
+    }
+  
+    return this.prisma.itemAdquirido.delete({
+      where: { id: itemId },
+    });
+  }
+  
 }
