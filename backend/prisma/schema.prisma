@@ -98,6 +98,7 @@ model Jogador {
   efeitosTemporarios Efeito[]
   acoesPendentes     AcaoIntermediaria[]
   combates           Combate[]
+  itemAdquirido  ItemAdquirido[]
 }
 
 model Opcao {
@@ -163,9 +164,14 @@ model Efeito {
 model ItemAdquirido {
   id          String     @id @default(uuid())
   nome        String
-  paragrafoId Int
-  paragrafo   Paragrafo  @relation(fields: [paragrafoId], references: [id])
+
+  jogadorId   String?
+  jogador     Jogador?   @relation(fields: [jogadorId], references: [id])
+
+  paragrafoId Int?
+  paragrafo   Paragrafo? @relation(fields: [paragrafoId], references: [id])
 }
+
 
 model DecisaoCondicional {
   id               String     @id @default(uuid())
