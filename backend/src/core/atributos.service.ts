@@ -57,4 +57,26 @@ export class AtributosService {
 
     return sucesso;
   }
+  async testarSorte(jogadorId: string) {
+    const jogador = await this.prisma.jogador.findUnique({ where: { id: jogadorId } });
+    if (!jogador) throw new Error('Jogador não encontrado');
+  
+    const rolagem = this.dice.rolarMultiplos(2, 6);
+    const sucesso = rolagem <= jogador.sorte;
+  
+    const novoValor = jogador.sorte - 1;
+  
+    await this.prisma.jogador.update({
+      where: { id: jogadorId },
+      data: { sorte: novoValor },
+    });
+  
+    return {
+      sucesso,
+      rolagem,
+      sorteAnterior: jogador.sorte,
+      sorteAtual: novoValor,
+    };
+  }
+  
 }
