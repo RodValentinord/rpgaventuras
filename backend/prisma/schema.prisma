@@ -189,6 +189,7 @@ model Equipamento {
   descricao      String
   bonusHabilidade Int?
   efeitoEspecial String?
+  equipado        Boolean
   jogadorId      String
   jogador        Jogador       @relation(fields: [jogadorId], references: [id])
 }
