@@ -1,12 +1,6 @@
 import { TipoOpcao, TipoAcao, TipoEfeito } from '@prisma/client';
+import { OpcaoDTO } from './opcao.dto';
 
-export class OpcaoDTO {
-  id: string;
-  texto: string;
-  destinoId: number;
-  tipoOpcao?: TipoOpcao;
-  condicao?: string;
-}
 
 export class CriaturaDTO {
   id: string;
